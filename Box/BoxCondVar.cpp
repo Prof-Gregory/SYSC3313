@@ -22,24 +22,25 @@ private:
     Type contents;
     bool empty = true;
     std::mutex mtx;
-    std::condition_variable cv;
+    std::condition_variable put_wait;
+    std::condition_variable get_wait;
 public:
-    Box() : contents(Type()), empty(true), mtx(), cv() {}	// Constructor
+    Box() : contents(Type()), empty(true), mtx(), put_wait(), get_wait() {}	// Constructor
 
     void put( Type item ) {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( !empty ) cv.wait(lock);
+	if ( !empty ) put_wait.wait(lock);
 	contents = item;
 	empty = false;
-	cv.notify_all();
+	get_wait.notify_one();
     }
 
     Type get() {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( empty ) cv.wait(lock);
+	if ( empty ) get_wait.wait(lock);
 	Type item = contents;
 	empty = true;
-	cv.notify_all();
+	put_wait.notify_one();
 	return item;
     }
 };

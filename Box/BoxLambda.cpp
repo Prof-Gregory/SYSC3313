@@ -26,9 +26,11 @@ private:
 public:
     Box() : contents(Type()), empty(true), mtx(), cv() {}	// Constructor
 
+    bool is_empty() { return empty; }
+    
     void put( Type item ) {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( !empty ) cv.wait(lock);
+	cv.wait(lock,[this](){ return is_empty(); });
 	contents = item;
 	empty = false;
 	cv.notify_all();
@@ -36,7 +38,7 @@ public:
 
     Type get() {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( empty ) cv.wait(lock);
+	cv.wait(lock,[this](){ return !is_empty(); } );
 	Type item = contents;
 	empty = true;
 	cv.notify_all();

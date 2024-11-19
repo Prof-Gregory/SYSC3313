@@ -20,26 +20,25 @@ template <typename Type> class Box
 {
 private:
     Type contents;
-    bool empty = true;
+    bool empty;
     std::mutex mtx;
-    std::condition_variable cv;
 public:
-    Box() : contents(Type()), empty(true), mtx(), cv() {}	// Constructor
+    Box() : contents(Type()), empty(true), mtx() {}	// Constructor
 
-    void put( Type item ) {
-	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( !empty ) cv.wait(lock);
+    bool put( Type item ) {
+	std::lock_guard<std::mutex> lock(mtx);	// releases when lock goes out of scope.
+	if ( !empty ) return false;		// might want to store zero
 	contents = item;
 	empty = false;
-	cv.notify_all();
+	return true;
     }
 
     Type get() {
-	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( empty ) cv.wait(lock);
+	std::lock_guard<std::mutex> lock(mtx);	// releases when lock goes out of scope.
+	if ( empty ) return Type();		// what about zeros?
 	Type item = contents;
 	empty = true;
-	cv.notify_all();
+	contents = Type();
 	return item;
     }
 };

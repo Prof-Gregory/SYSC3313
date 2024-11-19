@@ -1,46 +1,60 @@
 /**
  * The basic Box class to show mutual exclusion and 
- * condition synchronization using Resource Acquisition
- * Is Initialization (RAII) idiom.
+ * condition synchronization.
  * 
- * @author Lynn Marshall 
+ * @author Lynn Marshall, Greg Franks
  * @version 1.00
  */
 
 #include <chrono>
 #include <thread>
 #include <iostream>
-#include <random>
-#include <mutex>
-#include <condition_variable>
 
-
-//static std::mutex lock;
 template <typename Type> class Box
 {
 private:
     Type contents;
-    bool empty = true;
-    std::mutex mtx;
-    std::condition_variable cv;
+    bool empty;
+    
 public:
-    Box() : contents(Type()), empty(true), mtx(), cv() {}	// Constructor
+    Box() : contents(Type()), empty(true) {}	// Constructor
 
-    void put( Type item ) {
-	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( !empty ) cv.wait(lock);
-	contents = item;
-	empty = false;
-	cv.notify_all();
+/**
+ * Stores its argument in the Box if
+ * the Box is empty; otherwise, the
+ * Box contents are not changed.
+ *
+ * @param obj the object that is to be
+ *        stored in this Box.
+ * @return true if obj was stored in this
+ *         Box; false if another object
+ *         was already stored in the Box
+ *         (in which case, this Box was
+ *         not changed by invoking this
+ *         method).
+ */
+    bool put( Type item ) {
+        if ( !empty ) return false;
+
+        contents = item;
+        empty = false;
+        return true;
     }
 
+/**
+ * Removes the object stored in this
+ * Box, leaving the Box empty.
+ *
+ * @return the object stored in this Box,
+ *         if there is one.  
+ *         If the Box is empty,
+ *         returns null.
+ */
     Type get() {
-	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	while ( empty ) cv.wait(lock);
-	Type item = contents;
-	empty = true;
-	cv.notify_all();
-	return item;
+        Type item = contents;
+        empty = true;
+        contents = Type();
+        return item;
     }
 };
 
