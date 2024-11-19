@@ -42,13 +42,49 @@ public:
 };
 
 
+/**
+ * This thread calculates fib(1) through fib(20), where
+ * fib(1) = 1
+ * fib(2) = 1
+ * fib(n) = fib(n-1) + fib(n-2), n >2
+ */
+
+class Fibonacci {
+public:
+    void operator()( const std::string& name ) {
+        // fib(1) = 1
+        int firstFib = 0;
+        int secondFib = 1;
+	std::cout << "fib(1) = " << secondFib <<  std::endl;
+
+        for (int n = 2; n <= count; n++) {
+	    std::this_thread::sleep_for( std::chrono::milliseconds( static_cast<long>(f(generator) * 2000 )) );
+
+            // fib(n) = fib(n-1) + fib(n-2)
+            int fibN = firstFib + secondFib;
+	    std::cout << "fib(" << n << ") = " << fibN << std::endl;
+            secondFib = firstFib;
+            firstFib = fibN;
+        }
+	std::cout << name << "(" << std::this_thread::get_id() << ") finished" << std::endl;
+    }
+};
+
+
+
 int main( int argc, char ** argv )
 {
     std::cerr << "Creating factorial thread." << std::endl;
     Factorial compute;
-    std::thread thread( compute, "Factorial::operator()" );	// Pass by value.
-    std::cerr << "Created: " << thread.get_id() << std::endl;
-    thread.join();		// must join or aborts
-    std::cerr << "Factorial thread ended." << std::endl;
+    std::thread thread1( Factorial(), "Factorial::operator()" );
+    std::cerr << "Created: " << thread1.get_id() << std::endl;
+    std::thread thread2( Factorial(), "Factorial::operator()" );
+    std::cerr << "Created: " << thread2.get_id() << std::endl;
+    std::thread thread3( Fibonacci(), "Fibonacci::operator()" );
+    std::cerr << "Created: " << thread3.get_id() << std::endl;
+    thread1.join();
+    thread2.join();
+    thread3.join();
+    std::cerr << "main ended." << std::endl;
     return 0;
 }
