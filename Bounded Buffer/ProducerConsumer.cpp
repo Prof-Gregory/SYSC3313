@@ -1,47 +1,58 @@
-/**
- * The basic Box class to show mutual exclusion and 
- * condition synchronization using Resource Acquisition
- * Is Initialization (RAII) idiom.
+/** ProducerConsumer.cpp
+ *
+ * This is a C++ implementation of the classic producer/consumer/bounded buffer 
+ * program.
  * 
- * @author Lynn Marshall 
- * @version 1.00
+ * @author D.L. Bailey, 
+ * Systems and Computer Engineering,
+ * Carleton University
+ * @version 1.3, January 23, 2002
  */
 
 #include <chrono>
 #include <thread>
 #include <iostream>
 #include <random>
+#include <deque>
 #include <mutex>
 #include <condition_variable>
 
-
-//static std::mutex lock;
-template <typename Type> class Box
+template <typename Type> class BoundedBuffer
 {
 private:
-    Type contents;
+    const size_t size = 5;
+    std::deque<Type> contents;
     bool empty = true;
     std::mutex mtx;
-    std::condition_variable put_wait;
-    std::condition_variable get_wait;
+    std::condition_variable add_wait;
+    std::condition_variable remove_wait;
 public:
-    Box() : contents(Type()), empty(true), mtx(), put_wait(), get_wait() {}	// Constructor
+    BoundedBuffer() : contents(), empty(true), mtx(), add_wait(), remove_wait() {}	// Constructor
 
-    void put( Type item ) {
+    void addLast( Type item ) {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	if ( !empty ) put_wait.wait(lock);
-	contents = item;
+	while ( !writeable() ) add_wait.wait(lock);
+	contents.emplace_back(item);
 	empty = false;
-	get_wait.notify_one();
+	remove_wait.notify_one();
     }
 
-    Type get() {
+    Type removeFirst() {
 	std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	if ( empty ) get_wait.wait(lock);
-	Type item = contents;
-	empty = true;
-	put_wait.notify_one();
+	while ( !readable() ) remove_wait.wait(lock);
+	Type item = contents.front();
+	contents.pop_front();
+	add_wait.notify_one();
 	return item;
+    }
+
+private:
+    bool writeable() const {
+	return contents.size() < size;
+    }
+
+    bool readable() const {
+	return !contents.empty();
     }
 };
 
@@ -51,16 +62,15 @@ template <typename Type> class Producer
 {
 private:
     std::string name;
-    Box<Type>& box;
+    BoundedBuffer<Type>& buffer;
 
 public:
-    Producer( Box<Type>& a_box ) : name(), box(a_box) {}
+    Producer( BoundedBuffer<Type>& a_buffer ) : name(), buffer(a_buffer) {}
     
     void operator()( const std::string& name ) {
         for(int i = 0; i < 10; i++) {
 	    std::cout << name << "(" << std::this_thread::get_id() << ") produced " << i << std::endl;
-	    box.put( i );
-	    std::cout << name << "(" << std::this_thread::get_id() << ") put in box " << i << std::endl;
+	    buffer.addLast( i );
 	    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
 	}
     }
@@ -70,14 +80,13 @@ template <typename Type> class Consumer
 {
 private:
     std::string name;
-    Box<Type>& box;
+    BoundedBuffer<Type>& buffer;
 
 public:
-    Consumer( Box<Type>& a_box ) : name(), box(a_box) {}
+    Consumer( BoundedBuffer<Type>& a_buffer ) : name(), buffer(a_buffer) {}
     void operator()( const std::string& name ) {
         for(int i = 0; i < 10; i++) {
-	    std::cout << name << "(" << std::this_thread::get_id() << ") ready to consume " << i << std::endl;
-	    Type item = box.get();
+	    Type item = buffer.removeFirst();
 	    std::cout << name << "(" << std::this_thread::get_id() << ") consumed " << item << std::endl;
 	    std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
 	}
@@ -86,12 +95,12 @@ public:
 
 int main( int argc, char ** argv )
 {
-    Box<int> box;
-    Producer<int> producer( box );
-    Consumer<int> consumer( box );
+    BoundedBuffer<int> buffer;
+    Producer<int> producer( buffer );
+    Consumer<int> consumer( buffer );
     
-    std::thread producer_thread( producer, "producer" );	// Pass by value.
-    std::thread consumer_thread( consumer, "consumer" );	// Pass by value.
+    std::thread producer_thread( producer, "Producer" );
+    std::thread consumer_thread( consumer, "Consumer" );
     producer_thread.join();
     consumer_thread.join();
     return 0;
