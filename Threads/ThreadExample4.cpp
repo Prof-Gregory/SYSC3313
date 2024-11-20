@@ -29,13 +29,13 @@ public:
 
 	// 0! = 1
 	long factorial = 1;
-	std::cout << "0! = " << factorial << std::endl;
+	std::cout << name << ": 0! = " << factorial << std::endl;
 	for (int n = 1; n <= count; n++) {
 	    // Sleep for between 0 and 2 seconds before calculating n!
 	    std::this_thread::sleep_for( std::chrono::milliseconds( static_cast<long>(f(generator) * 2000 )) );
 	    // n! = n * (n-1)!
 	    factorial = n * factorial;
-	    std::cout << n << "! = " << factorial << std::endl;
+	    std::cout << name << ": " << n << "! = " << factorial << std::endl;
 	}
 	std::cout << name << "(" << std::this_thread::get_id() << ") finished" << std::endl;
     }
@@ -55,16 +55,16 @@ public:
         // fib(1) = 1
         int firstFib = 0;
         int secondFib = 1;
-	std::cout << "fib(1) = " << secondFib <<  std::endl;
+	std::cout << name << ": fib(1) = " << secondFib <<  std::endl;
 
         for (int n = 2; n <= count; n++) {
 	    std::this_thread::sleep_for( std::chrono::milliseconds( static_cast<long>(f(generator) * 2000 )) );
 
             // fib(n) = fib(n-1) + fib(n-2)
             int fibN = firstFib + secondFib;
-	    std::cout << "fib(" << n << ") = " << fibN << std::endl;
-            secondFib = firstFib;
-            firstFib = fibN;
+	    std::cout << name << ": fib(" << n << ") = " << fibN << std::endl;
+            firstFib = secondFib;
+            secondFib = fibN;
         }
 	std::cout << name << "(" << std::this_thread::get_id() << ") finished" << std::endl;
     }
@@ -76,11 +76,11 @@ int main( int argc, char ** argv )
 {
     std::cerr << "Creating factorial thread." << std::endl;
     Factorial compute;
-    std::thread thread1( Factorial(), "Factorial::operator()" );
+    std::thread thread1( Factorial(), "Factorial 1" );
     std::cerr << "Created: " << thread1.get_id() << std::endl;
-    std::thread thread2( Factorial(), "Factorial::operator()" );
+    std::thread thread2( Factorial(), "Factorial 2" );
     std::cerr << "Created: " << thread2.get_id() << std::endl;
-    std::thread thread3( Fibonacci(), "Fibonacci::operator()" );
+    std::thread thread3( Fibonacci(), "Fibonacci" );
     std::cerr << "Created: " << thread3.get_id() << std::endl;
     thread1.join();
     thread2.join();

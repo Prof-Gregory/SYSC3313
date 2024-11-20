@@ -14,13 +14,11 @@
 #include <mutex>
 #include <condition_variable>
 
-
-//static std::mutex lock;
 template <typename Type> class Box
 {
 private:
-    Type contents;
-    bool empty = true;
+    Type contents;	// The "Type" stored in the box
+    bool empty = true;	// The state of the box.
     std::mutex mtx;
     std::condition_variable cv;
 public:
