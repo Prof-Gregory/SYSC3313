@@ -1,15 +1,10 @@
-CXX = clang++
-CXXFLAGS += -std=c++11
+CXX = clang++ -std=c++11 -Wall
 
-DSTS = Box BrokenBox SafeBox BoxLambda BoxCondVar
+DSTS = SimpleEchoClient
 
 all: $(DSTS)
 
 clean:
 	rm $(DSTS)
 
-Box:	Box.cpp
-BrokenBox:	BrokenBox.cpp
-SafeBox:	SafeBox.cpp
-BoxLambda:	BoxLambda.cpp
-BoxCondVar:	BoxCondVar.cpp
+SimpleEchoClient:	SimpleEchoClient.cpp
