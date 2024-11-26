@@ -33,15 +33,16 @@
 *.exe
 *.out
 *.app
+Bounded Buffer/ProducerConsumer
+Bounded Buffer/ProducerConsumer1CV
 Box/Box
 Box/BoxCondVar
 Box/BoxLambda
 Box/BrokenBox
 Box/SafeBox
+Simple Echo Client Server/SimpleEchoClient
 Threads/Terminate
 Threads/ThreadExample1
 Threads/ThreadExample2
 Threads/ThreadExample3
 Threads/ThreadExample4
-Bounded Buffer/ProducerConsumer
-Bounded Buffer/ProducerConsumer1CV
