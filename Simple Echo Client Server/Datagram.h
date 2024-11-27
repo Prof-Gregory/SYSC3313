@@ -21,16 +21,9 @@ public:
 
 class DatagramPacket {
 public:
-    DatagramPacket() : _data() {
-	memset(&_address, 0, sizeof(_address)); 
-       
+    DatagramPacket( std::vector<uint8_t>& data, size_t length, in_addr_t address=INADDR_ANY, in_port_t port=0 ) : _data(data) {
 	_address.sin_family = AF_INET; 
-	_address.sin_port = htons(0); 
-	_address.sin_addr.s_addr = INADDR_ANY;		/* Bind to all local interfaces */
-    }
-    DatagramPacket( const std::vector<uint8_t>& data, size_t length, in_addr_t address=INADDR_ANY, in_port_t port=0 ) : _data(data) {
-	_address.sin_family = AF_INET; 
-	_address.sin_port = htons(port); 
+	_address.sin_port = htons(port); 		// swap to network byte order.
 	_address.sin_addr.s_addr = address;
 	_length = std::min( data.size(), length );	// Take smaller value.
     }
@@ -39,14 +32,15 @@ public:
     size_t getLength() const { return _length; }
     void setLength( size_t length ) { _length = std::min( length, _data.size() ); }
     in_addr_t getAddress() { return _address.sin_addr.s_addr; }
-    in_port_t getPort() { return _address.sin_port; }
+    in_port_t getPort() { return ntohs(_address.sin_port); } 	// swap to host byte order.
+    std::string getAddressAsString() const { return std::string( inet_ntoa( _address.sin_addr ) ); }
 
     struct sockaddr* address() { return reinterpret_cast<sockaddr*>(&_address); }
     std::vector<uint8_t>::const_iterator begin() const { return _data.begin(); }
     std::vector<uint8_t>::const_iterator end() const { return _data.end(); }
 
 private:
-    std::vector<uint8_t> _data;
+    std::vector<uint8_t>& _data;	/* Don't copy data passed in constructor */
     size_t _length;
     struct sockaddr_in _address;
 };

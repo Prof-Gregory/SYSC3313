@@ -9,3 +9,6 @@ clean:
 
 SimpleEchoClient:	SimpleEchoClient.cpp
 SimpleEchoServer:	SimpleEchoServer.cpp
+
+SimpleEchoClient.cpp:	 Datagram.h
+SimpleEchoServer.cpp:	 Datagram.h

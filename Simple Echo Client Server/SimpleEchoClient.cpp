@@ -45,7 +45,7 @@ public:
 	DatagramPacket sendPacket( out, out.size(), InetAddress::getLocalHost(), PORT );
 
 	std::cout << "Client: Sending packet:" << std::endl;
-	std::cout << "To host: " << sendPacket.getAddress() << std::endl;
+	std::cout << "To host: " << sendPacket.getAddressAsString() << std::endl;
 	std::cout << "Destination host port: " << sendPacket.getPort() << std::endl;
 	int len = sendPacket.getLength();
 	std::cout << "Length: " << len << std::endl;
@@ -80,7 +80,7 @@ public:
 
 	// Process the received datagram.
 	std::cout << "Client: Packet received:" << std::endl;
-	std::cout << "From host: " << receivePacket.getAddress() << std::endl;
+	std::cout << "From host: " << receivePacket.getAddressAsString() << std::endl;
 	std::cout << "Host port: " << receivePacket.getPort() << std::endl;
 	len = receivePacket.getLength();
 	std::cout << "Length: " << len << std::endl;

@@ -51,7 +51,7 @@ public:
 
 	// Process the received datagram.
 	std::cout << "Server: Packet received:" << std::endl;
-	std::cout << "From host: " << receivePacket.getAddress() << std::endl;
+	std::cout << "From host: " << receivePacket.getAddressAsString() << std::endl;
 	std::cout << "Host port: " << receivePacket.getPort() << std::endl;
 	int len = receivePacket.getLength();
 	std::cout << "Length: " << len << std::endl
@@ -64,34 +64,34 @@ public:
 	// Slow things down (wait 5 seconds)
 	std::this_thread::sleep_for( std::chrono::seconds( 5 ) );
  
-      // Create a new datagram packet containing the string received from the client.
+	// Create a new datagram packet containing the string received from the client.
 
-      // Construct a datagram packet that is to be sent to a specified port 
-      // on a specified host.
-      // The arguments are:
-      //  data - the packet data (a byte array). This is the packet data
-      //         that was received from the client.
-      //  receivePacket.getLength() - the length of the packet data.
-      //    Since we are echoing the received packet, this is the length 
-      //    of the received packet's data. 
-      //    This value is <= data.length (the length of the byte array).
-      //  receivePacket.getAddress() - the Internet address of the 
-      //     destination host. Since we want to send a packet back to the 
-      //     client, we extract the address of the machine where the
-      //     client is running from the datagram that was sent to us by 
-      //     the client.
-      //  receivePacket.getPort() - the destination port number on the 
-      //     destination host where the client is running. The client
-      //     sends and receives datagrams through the same socket/port,
-      //     so we extract the port that the client used to send us the
-      //     datagram, and use that as the destination port for the echoed
-      //     packet.
+	// Construct a datagram packet that is to be sent to a specified port 
+	// on a specified host.
+	// The arguments are:
+	//  data - the packet data (a byte array). This is the packet data
+	//         that was received from the client.
+	//  receivePacket.getLength() - the length of the packet data.
+	//    Since we are echoing the received packet, this is the length 
+	//    of the received packet's data. 
+	//    This value is <= data.length (the length of the byte array).
+	//  receivePacket.getAddress() - the Internet address of the 
+	//     destination host. Since we want to send a packet back to the 
+	//     client, we extract the address of the machine where the
+	//     client is running from the datagram that was sent to us by 
+	//     the client.
+	//  receivePacket.getPort() - the destination port number on the 
+	//     destination host where the client is running. The client
+	//     sends and receives datagrams through the same socket/port,
+	//     so we extract the port that the client used to send us the
+	//     datagram, and use that as the destination port for the echoed
+	//     packet.
 
 	DatagramPacket sendPacket(data, receivePacket.getLength(),
 				  receivePacket.getAddress(), receivePacket.getPort());
 
 	std::cout <<  "Server: Sending packet:" << std::endl;
-	std::cout << "To host: " << sendPacket.getAddress() << std::endl;
+	std::cout << "To host: " << sendPacket.getAddressAsString() << std::endl;
 	std::cout << "Destination host port: " << sendPacket.getPort() << std::endl;
 	len = sendPacket.getLength();
 	std::cout << "Length: " << len << std::endl
