@@ -1,4 +1,5 @@
 CXX = clang++ -std=c++11 -Wall
+CC  = $(CXX)
 
 DSTS = SimpleEchoClient SimpleEchoServer
 
@@ -7,8 +8,8 @@ all: $(DSTS)
 clean:
 	rm $(DSTS)
 
-SimpleEchoClient:	SimpleEchoClient.cpp
-SimpleEchoServer:	SimpleEchoServer.cpp
+SimpleEchoClient:	SimpleEchoClient.o
+SimpleEchoServer:	SimpleEchoServer.o
 
-SimpleEchoClient.cpp:	 Datagram.h
-SimpleEchoServer.cpp:	 Datagram.h
+SimpleEchoClient.o:	 SimpleEchoClient.cpp Datagram.h
+SimpleEchoServer.o:	 SimpleEchoServer.cpp Datagram.h

@@ -27,7 +27,7 @@ public:
 	// to port 5000 on the destination host.
  
 	const std::string s = "Anyone there?";
-	std::cout << "Client: sending a packet containing: " << s << std::endl;
+	std::cout << "Client: sending a packet containing:" << std::endl << s << std::endl;
 
 	// Construct a datagram packet that is to be sent to a specified port 
 	// on a specified host.
