@@ -33,6 +33,8 @@
 *.exe
 *.out
 *.app
+Atomic/Atomic
+Atomic/Mutex
 Bounded Buffer/ProducerConsumer
 Bounded Buffer/ProducerConsumer1CV
 Box/Box
@@ -40,6 +42,9 @@ Box/BoxCondVar
 Box/BoxLambda
 Box/BrokenBox
 Box/SafeBox
+STL/Makefile
+STL/functor
+STL/lambda
 Simple Echo Client Server/SimpleEchoClient
 Simple Echo Client Server/SimpleEchoServer
 Threads/Terminate
@@ -47,5 +52,3 @@ Threads/ThreadExample1
 Threads/ThreadExample2
 Threads/ThreadExample3
 Threads/ThreadExample4
-Atomic/Atomic
-Atomic/Mutex
