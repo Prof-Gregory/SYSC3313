@@ -15,9 +15,9 @@ std::mutex mtx;
 void f() {
     for (int n = 0; n < 10000; ++n) {
 	{
-	    std::unique_lock<std::mutex> lock(mtx);
+	    std::lock_guard<std::mutex> lock(mtx);
 	    ++acnt;
-	    lock.unlock();
+//	    lock.unlock();
 	}
         ++cnt;
         // Note: for this example, relaxed memory order

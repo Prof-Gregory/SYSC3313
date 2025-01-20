@@ -42,8 +42,8 @@ Box/BoxCondVar
 Box/BoxLambda
 Box/BrokenBox
 Box/SafeBox
-STL/Makefile
 STL/functor
+STL/mem_fn
 STL/lambda
 Simple Echo Client Server/SimpleEchoClient
 Simple Echo Client Server/SimpleEchoServer
