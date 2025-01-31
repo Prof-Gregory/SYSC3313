@@ -1,4 +1,4 @@
-CXX = clang++ -std=c++11
+CXX = g++ -std=c++11
 #CXXFLAGS =
 
 DSTS = ThreadExample1 ThreadExample2 ThreadExample3 ThreadExample4 Terminate

@@ -33,6 +33,7 @@
 *.exe
 *.out
 *.app
+*.zip
 Atomic/Atomic
 Atomic/Mutex
 Bounded Buffer/ProducerConsumer
