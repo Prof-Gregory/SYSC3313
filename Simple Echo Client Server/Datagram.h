@@ -33,7 +33,7 @@ public:
     size_t getLength() const { return _length; }
     void setLength( size_t length ) { _length = std::min( length, _data.size() ); }
     in_addr_t getAddress() { return _address.sin_addr.s_addr; }
-    in_port_t getPort() { return ntohs(_address.sin_port); } 	// swap to host byte order.
+    in_port_t getPort() { return _address.sin_port; } 	// swap to host byte order.
     std::string getAddressAsString() const { return std::string( inet_ntoa( _address.sin_addr ) ); }
 
     struct sockaddr* address() { return reinterpret_cast<sockaddr*>(&_address); }

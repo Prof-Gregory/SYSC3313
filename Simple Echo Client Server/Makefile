@@ -1,12 +1,12 @@
-CXX = clang++ -std=c++11 -Wall
+CXX = g++ -std=c++11 -Wall -g
 CC  = $(CXX)
 
 DSTS = SimpleEchoClient SimpleEchoServer
-
+OBJS = SimpleEchoClient.o SimpleEchoServer.o
 all: $(DSTS)
 
 clean:
-	rm $(DSTS)
+	rm $(DSTS) $(OBJS)
 
 SimpleEchoClient:	SimpleEchoClient.o
 SimpleEchoServer:	SimpleEchoServer.o
