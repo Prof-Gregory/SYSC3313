@@ -53,3 +53,5 @@ Threads/ThreadExample1
 Threads/ThreadExample2
 Threads/ThreadExample3
 Threads/ThreadExample4
+WorkQueue/StoppableWorkQueue
+WorkQueue/WorkQueue
