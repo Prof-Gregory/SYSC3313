@@ -1,6 +1,7 @@
 # Auto save files
 *~
 *.output
+.DS_Store
 
 # Prerequisites
 *.d

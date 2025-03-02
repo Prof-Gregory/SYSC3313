@@ -12,7 +12,7 @@ template <typename Type> class WorkQueue
 private:
     std::list<Type> queue;
     std::mutex mtx;
-    std::condition_variable cv;
+    std::condition_variable_any cv;
     
 public:
     WorkQueue() : queue(), mtx(), cv() {}
@@ -37,17 +37,17 @@ public:
 
 private:
     void dispatch( std::stop_token stop_token, const std::string& name ) {
-	while (true && !stop_token.stop_requested()) {
+	while (true) {
 	    Type workItem;
 	    {
-	    std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
-	    while ( queue.empty() ) {
-		cv.wait(lock);
+		std::unique_lock<std::mutex> lock(mtx);	// releases when lock goes out of scope.
+		if ( !cv.wait(lock,stop_token,[&](){return !queue.empty();}) ) {
+		    std::cerr << "Stopping " <<  name << std::endl;
+		    return;
+		}
+		workItem = queue.front();
+		queue.pop_front();
 	    }
-	    workItem = queue.front();
-	    queue.pop_front();
-	    }
-//	    mtx.unlock(); // end of critical section
 	    processItem(workItem);
 	}
     }
@@ -64,8 +64,8 @@ int main( int argc, char ** argv )
     dispatcher.enqueue( "Two" );
     std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
     dispatcher.enqueue( "Three" );
+    std::this_thread::sleep_for( 6s );
     std::cerr << "main() finished." << std::endl;
-    std::this_thread::sleep_for( 5s );
     stop_source.request_stop();
-    thread.join();
+//    thread.join();
 }
