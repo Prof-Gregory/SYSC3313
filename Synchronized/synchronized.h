@@ -21,6 +21,8 @@ public:
 
     bool empty() const { std::lock_guard<std::mutex> l(m); return c.empty(); }
     size_type size() const { std::lock_guard<std::mutex> l(m); return c.size(); }
+    reference operator[](size_type n) { std::lock_guard<std::mutex> l(m); return c[n]; }
+    const_reference operator[](size_type n) const { std::lock_guard<std::mutex> l(m); return c[n]; }
     reference at(size_type n) { std::lock_guard<std::mutex> l(m); return c.at(n); }
     const_reference at(size_type n) const { std::lock_guard<std::mutex> l(m); return c.at(n); }
     void resize(size_type sz) { std::lock_guard<std::mutex> l(m); c.resize(sz); }

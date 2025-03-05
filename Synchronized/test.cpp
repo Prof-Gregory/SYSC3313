@@ -1,18 +1,17 @@
+#include <cassert>
 #include "synchronized.h"
-#include <iostream>
+#include <thread>
 
+#define SIZE 10000
 
 int
 main( int argc, char **argv )
 {
-    synchronized<int> v(10);
-    int i;
+    synchronized<int> v(SIZE);
 
-    for ( i = 0; i < 10; ++i ) {
-	v.at(i) = i;
-    }
-
-    for ( i = 0; i < 10; ++i ) {
-	std::cerr << "i = " << i << ", v[i] = " << v.at(i) << std::endl;
-    }
+    std::thread even( [&](){ for ( int i = 0; i < SIZE; i += 2 ) v[i] = i; } );
+    std::thread odd( [&](){ for ( int i = 1; i < SIZE; i += 2 )  v[i] = i; } );
+    even.join();
+    odd.join();
+    for ( int i = 0; i < SIZE; ++i ) assert( i == v[i] );
 }
